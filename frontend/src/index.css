@@ -868,3 +868,27 @@
   .pq-tabbar, .pq-appbar, .pq-fab { display: none !important; }
   .card, .pq-card { box-shadow: none !important; border: 1px solid #e2e8f0; }
 }
+
+@keyframes pqDrawerIn {
+  from { transform: translateX(100%); opacity: 0.6; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+/* Hospital search page helpers */
+@layer utilities {
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+@layer utilities {
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
