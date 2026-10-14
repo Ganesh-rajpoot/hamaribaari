@@ -172,7 +172,7 @@ import { useAuth } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import PageTransition from './components/PageTransition';
 import InstallPWA from './components/InstallPWA';
-
+import Footer from './components/Footer';
 import Landing from './pages/public/Landing';
 import Login from './pages/public/Login';
 import Register from './pages/public/Register';
@@ -453,88 +453,88 @@ function DrawerLink({ to, icon: Icon, children, onClick, active }) {
 /* ====================================================================
    Footer — brand, quick links, legal, responsive
    ==================================================================== */
-function Footer() {
-  return (
-    <footer className="mt-10 border-t border-slate-100 bg-slate-50">
-      <div className="mx-auto max-w-6xl px-4 py-10">
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-          {/* Brand */}
-          <div className="sm:col-span-2 lg:col-span-1">
-            <Link to="/" className="flex items-center gap-2">
-              <img src="/logo.svg" alt="" className="w-8 h-8 rounded-xl" />
-              <span className="font-bold text-slate-900">
-                Hamari<span className="text-brand-600">Baari</span>
-              </span>
-            </Link>
-            <p className="mt-3 text-sm text-slate-600 max-w-xs">
-              Join the queue from home. Reach closer to your turn.
-            </p>
-          </div>
+// function Footer() {
+//   return (
+//     <footer className="mt-10 border-t border-slate-100 bg-slate-50">
+//       <div className="mx-auto max-w-6xl px-4 py-10">
+//         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+//           {/* Brand */}
+//           <div className="sm:col-span-2 lg:col-span-1">
+//             <Link to="/" className="flex items-center gap-2">
+//               <img src="/logo.svg" alt="" className="w-8 h-8 rounded-xl" />
+//               <span className="font-bold text-slate-900">
+//                 Hamari<span className="text-brand-600">Baari</span>
+//               </span>
+//             </Link>
+//             <p className="mt-3 text-sm text-slate-600 max-w-xs">
+//               Join the queue from home. Reach closer to your turn.
+//             </p>
+//           </div>
 
-          {/* Product */}
-          <div>
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-              Product
-            </h4>
-            <ul className="mt-3 space-y-2 text-sm">
-              <FooterLink to="/hospitals">Find a hospital</FooterLink>
-              <FooterLink to="/register">Create account</FooterLink>
-              <FooterLink to="/login">Sign in</FooterLink>
-            </ul>
-          </div>
+//           {/* Product */}
+//           <div>
+//             <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+//               Product
+//             </h4>
+//             <ul className="mt-3 space-y-2 text-sm">
+//               <FooterLink to="/hospitals">Find a hospital</FooterLink>
+//               <FooterLink to="/register">Create account</FooterLink>
+//               <FooterLink to="/login">Sign in</FooterLink>
+//             </ul>
+//           </div>
 
-          {/* For hospitals */}
-          <div>
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-              For hospitals
-            </h4>
-            <ul className="mt-3 space-y-2 text-sm">
-              <li className="text-slate-600 flex items-center gap-2">
-                <Stethoscope className="w-4 h-4 text-slate-400" />
-                OPD queue management
-              </li>
-              <li className="text-slate-600 flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-slate-400" />
-                Reception + doctors console
-              </li>
-              <li className="text-slate-500 text-xs mt-3">
-                Contact sales for onboarding.
-              </li>
-            </ul>
-          </div>
+//           {/* For hospitals */}
+//           <div>
+//             <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+//               For hospitals
+//             </h4>
+//             <ul className="mt-3 space-y-2 text-sm">
+//               <li className="text-slate-600 flex items-center gap-2">
+//                 <Stethoscope className="w-4 h-4 text-slate-400" />
+//                 OPD queue management
+//               </li>
+//               <li className="text-slate-600 flex items-center gap-2">
+//                 <MapPin className="w-4 h-4 text-slate-400" />
+//                 Reception + doctors console
+//               </li>
+//               <li className="text-slate-500 text-xs mt-3">
+//                 Contact sales for onboarding.
+//               </li>
+//             </ul>
+//           </div>
 
-          {/* Legal */}
-          <div>
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-              Legal
-            </h4>
-            <ul className="mt-3 space-y-2 text-sm">
-              <FooterLink to="/privacy">Privacy Policy</FooterLink>
-              <FooterLink to="/terms">Terms of Use</FooterLink>
-            </ul>
-          </div>
-        </div>
+//           {/* Legal */}
+//           <div>
+//             <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+//               Legal
+//             </h4>
+//             <ul className="mt-3 space-y-2 text-sm">
+//               <FooterLink to="/privacy">Privacy Policy</FooterLink>
+//               <FooterLink to="/terms">Terms of Use</FooterLink>
+//             </ul>
+//           </div>
+//         </div>
 
-        {/* Bottom strip */}
-        <div className="mt-10 pt-6 border-t border-slate-200 flex flex-col sm:flex-row
-                        items-center justify-between gap-3 text-xs text-slate-500">
-          <div>
-            © {new Date().getFullYear()} HamariBaari. All rights reserved.
-          </div>
-          <div className="flex items-center gap-4">
-            <Link to="/privacy" className="hover:text-slate-800">Privacy</Link>
-            <Link to="/terms" className="hover:text-slate-800">Terms</Link>
-          </div>
-        </div>
+//         {/* Bottom strip */}
+//         <div className="mt-10 pt-6 border-t border-slate-200 flex flex-col sm:flex-row
+//                         items-center justify-between gap-3 text-xs text-slate-500">
+//           <div>
+//             © {new Date().getFullYear()} HamariBaari. All rights reserved.
+//           </div>
+//           <div className="flex items-center gap-4">
+//             <Link to="/privacy" className="hover:text-slate-800">Privacy</Link>
+//             <Link to="/terms" className="hover:text-slate-800">Terms</Link>
+//           </div>
+//         </div>
 
-        <p className="mt-4 text-[11px] text-slate-400 text-center sm:text-left">
-          HamariBaari is a queue management tool. It does not provide medical advice,
-          diagnosis, prescriptions, or process payments.
-        </p>
-      </div>
-    </footer>
-  );
-}
+//         <p className="mt-4 text-[11px] text-slate-400 text-center sm:text-left">
+//           HamariBaari is a queue management tool. It does not provide medical advice,
+//           diagnosis, prescriptions, or process payments.
+//         </p>
+//       </div>
+//     </footer>
+//   );
+// }
 
 function FooterLink({ to, children }) {
   return (
