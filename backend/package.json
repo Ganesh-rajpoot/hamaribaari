@@ -1,0 +1,52 @@
+{
+  "name": "hospital-queue-backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "dev": "dotenv -e .env.development -- nodemon src/server.js",
+  "start": "node src/server.js",
+  "test": "cross-env NODE_ENV=test dotenv -e .env.test -o -- jest --runInBand --detectOpenHandles",
+  "test:watch": "cross-env NODE_ENV=test dotenv -e .env.test -o -- jest --runInBand --watch",
+  "prisma:generate": "dotenv -e .env.development -- prisma generate",
+  "prisma:migrate": "dotenv -e .env.development -- prisma migrate dev",
+  "prisma:deploy": "dotenv -e .env.development -- prisma migrate deploy",
+  "prisma:studio": "dotenv -e .env.development -- prisma studio",
+  "db:seed": "dotenv -e .env.development -- prisma db seed"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/tests/**/*.test.js"
+    ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/tests/setup.js"
+    ],
+    "globalSetup": "<rootDir>/tests/globalSetup.js",
+    "globalTeardown": "<rootDir>/tests/globalTeardown.js",
+    "verbose": true,
+    "testTimeout": 30000
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.20.0",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "express-rate-limit": "^7.4.0",
+    "express-validator": "^7.2.0",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "devDependencies": {
+    "cross-env": "^10.1.0",
+    "dotenv-cli": "^11.0.0",
+    "jest": "^30.5.2",
+    "nodemon": "^1.14.10",
+    "prisma": "^5.20.0",
+    "supertest": "^7.3.1"
+  }
+}

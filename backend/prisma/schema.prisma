@@ -1,0 +1,208 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  SUPER_ADMIN
+  HOSPITAL_ADMIN
+  RECEPTIONIST
+  DOCTOR
+  PATIENT
+}
+enum SessionStatus {
+  SCHEDULED
+  OPEN
+  PAUSED
+  CLOSED
+  CANCELLED
+  UNAVAILABLE
+}
+
+enum HospitalStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+}
+
+
+enum TokenStatus {
+  WAITING
+  CALLED
+  IN_CONSULTATION
+  COMPLETED
+  SKIPPED
+  CANCELLED
+  NO_SHOW
+}
+
+enum ArrivalStatus {
+  NOT_ARRIVED
+  ARRIVED
+}
+
+enum TokenSource {
+  ONLINE
+  WALK_IN
+}
+
+model User {
+  id           String   @id @default(uuid()) @db.Uuid
+  fullName     String
+  mobile       String   @unique
+  passwordHash String
+  role         Role
+  hospitalId   String?  @db.Uuid
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  hospital     Hospital?      @relation(fields: [hospitalId], references: [id], onDelete: SetNull)
+  doctorProfile DoctorProfile?
+  tokens       QueueToken[]   @relation("PatientTokens")
+  auditLogs    AuditLog[]     @relation("ActorAudit")
+
+  @@index([role, hospitalId])
+}
+
+model Hospital {
+  id        String          @id @default(uuid()) @db.Uuid
+  name      String
+  city      String
+  address   String?
+  phone     String?
+  status    HospitalStatus  @default(ACTIVE)   // NEW
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+
+  users       User[]
+  departments Department[]
+  doctors     DoctorProfile[]
+  sessions    OPDSession[]
+  auditLogs   AuditLog[]
+
+  @@unique([name, city])
+  @@index([status])                            // NEW
+}
+model Department {
+  id         String   @id @default(uuid()) @db.Uuid
+  hospitalId String   @db.Uuid
+  name       String
+  code       String
+  createdAt  DateTime @default(now())
+
+  hospital Hospital        @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
+  doctors  DoctorProfile[]
+
+  @@unique([hospitalId, code])
+  @@index([hospitalId])
+}
+
+model DoctorProfile {
+  id                String   @id @default(uuid()) @db.Uuid
+  userId            String   @unique @db.Uuid
+  hospitalId        String   @db.Uuid
+  departmentId      String   @db.Uuid
+  registrationNo    String?
+  roomNo            String?
+  avgConsultMinutes Int      @default(8)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  hospital    Hospital         @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
+  department  Department       @relation(fields: [departmentId], references: [id], onDelete: Restrict)
+  schedules   DoctorSchedule[]
+  sessions    OPDSession[]
+
+  @@index([hospitalId, departmentId])
+}
+
+model DoctorSchedule {
+  id          String   @id @default(uuid()) @db.Uuid
+  doctorId    String   @db.Uuid
+  weekday     Int      // 0=Sunday .. 6=Saturday
+  startTime   String   // "09:00"
+  endTime     String   // "13:00"
+  maxCapacity Int      @default(40)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  doctor DoctorProfile @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+
+  @@unique([doctorId, weekday, startTime])
+  @@index([doctorId])
+}
+
+model OPDSession {
+  id                String        @id @default(uuid()) @db.Uuid
+  doctorId          String        @db.Uuid
+  hospitalId        String        @db.Uuid
+  sessionDate       DateTime      @db.Date
+  startTime         String        // "09:00"
+  endTime           String        // "13:00"
+  status            SessionStatus @default(SCHEDULED)
+  maxCapacity       Int           @default(40)
+  bookedCount       Int           @default(0)
+  nextTokenNumber   Int           @default(1)
+  onlineCutoffTime  String?       // "11:00" — optional
+  cancelReason      String?
+  openedAt          DateTime?
+  closedAt          DateTime?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  doctor  DoctorProfile @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  hospital Hospital     @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
+  tokens  QueueToken[]
+
+  @@unique([doctorId, sessionDate])
+  @@index([sessionDate, status])
+  @@index([hospitalId, sessionDate])
+}
+
+model QueueToken {
+  id            String        @id @default(uuid()) @db.Uuid
+  sessionId     String        @db.Uuid
+  patientId     String        @db.Uuid
+  tokenNumber   Int
+  source        TokenSource
+  status        TokenStatus   @default(WAITING)
+  arrivalStatus ArrivalStatus @default(NOT_ARRIVED)
+  position      Int?          // set when "put at end"
+  calledAt      DateTime?
+  startedAt     DateTime?
+  completedAt   DateTime?
+  cancelReason  String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  session OPDSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  patient User       @relation("PatientTokens", fields: [patientId], references: [id], onDelete: Restrict)
+
+  @@unique([sessionId, tokenNumber])
+  @@index([sessionId, status])
+  @@index([patientId, createdAt])
+}
+
+model AuditLog {
+  id         String   @id @default(uuid()) @db.Uuid
+  actorId    String?  @db.Uuid
+  hospitalId String?  @db.Uuid
+  action     String
+  entity     String
+  entityId   String?
+  metadata   Json?
+  ip         String?
+  createdAt  DateTime @default(now())
+
+  actor    User?     @relation("ActorAudit", fields: [actorId], references: [id], onDelete: SetNull)
+  hospital Hospital? @relation(fields: [hospitalId], references: [id], onDelete: SetNull)
+
+  @@index([hospitalId, createdAt])
+  @@index([actorId, createdAt])
+}
