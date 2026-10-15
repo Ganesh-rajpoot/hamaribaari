@@ -63,13 +63,36 @@ app.use(helmet({
   crossOriginResourcePolicy: { policy: 'cross-origin' },
 }));
 
+// Apne allowed domains ki list yahan define karein
+const allowedOrigins = [
+  'https://hamaribaari.my99store.com',
+  'https://hamaribaari-cbhw.vercel.app',
+  FRONTEND_URL // Agar env variable se bhi aa raha hai
+].filter(Boolean); // Undefined values ko hatane ke liye
+
 app.use(cors({
-  origin: [FRONTEND_URL],
+  origin: function (origin, callback) {
+    // Postman ya server-to-server requests ke liye jinka origin nahi hota
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = `The CORS policy for this site does not allow access from the specified Origin: ${origin}`;
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
   credentials: false,
   methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Request-Id'],
   maxAge: 600,
 }));
+// app.use(cors({
+//   origin: [FRONTEND_URL],
+//   credentials: false,
+//   methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
+//   allowedHeaders: ['Content-Type', 'Authorization', 'X-Request-Id'],
+//   maxAge: 600,
+// }));
 
 app.use(express.json({ limit: '100kb' }));
 app.use(requestId);
