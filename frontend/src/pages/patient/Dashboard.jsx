@@ -125,6 +125,7 @@ import { useAuth } from '../../context/AuthContext';
 import { getMyTokens } from '../../api/tokens';
 import { getErrorMessage } from '../../api/client';
 import useInterval from '../../hooks/useInterval';
+import PullToRefresh from '../../components/PullToRefresh';
 
 const isActive = (t) => ['WAITING', 'CALLED', 'IN_CONSULTATION'].includes(t.status);
 
